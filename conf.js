@@ -8,7 +8,7 @@ exports.bLight = false;
 // exports.bSingleAddress = true;
 
 exports.storage = 'sqlite';
-
+exports.salt = "dagx";
 exports.hub = 'bsure.vip/bb';
 exports.deviceName = 'Headless';
 exports.permanent_pairing_secret = 'randomstring';

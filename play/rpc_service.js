@@ -20,6 +20,7 @@ var validationUtils = require("bng-core/validation_utils.js");
 var wallet_id;
 var http = require('http');
 var querystring = require('querystring');
+var crypto = require('crypto');
 if (conf.bSingleAddress)
     throw Error('can`t run in single address mode');
 
@@ -360,16 +361,20 @@ function initRPC() {
         });
         composer.composeDataFeedJoint(args[1], args[0], headlessWallet.signer, callbacks);
     });
-    server.expose('adduser', function (args, opt, cb) {
+    server.expose('addjobseeker', function (args, opt, cb) {
         getdefaultaddress(function (address) {
             var birth = args[1].birth;
             var profile = {
                 姓名: args[1].name,
                 性别: args[1].sex,
                 民族: args[1].nationality,
-                身份证: args[1].idnum,
+                身份证: encryption(args[1].idnum),//加密
                 出生日期: birth.substring(0, 4) + "-" + birth.substring(4, 6) + "-" + birth.substring(6, 8),
-                住址: args[1].address
+                住址: args[1].address,
+                求职意向: args[1].jobtarget,
+                特长: args[1].skill,
+                银行卡号: encryption(args[1].bank),//加密
+                电话: encryption(args[1].phone)//加密
             };
             let attestation, src_profile;
             [attestation, src_profile] = hideProfile(args[0], profile);
@@ -446,7 +451,7 @@ function postAttestation(attestor_address, payload, onDone) {
 
     var network = require('bng-core/network.js');
     var composer = require('bng-core/composer.js');
-    let headlessWallet = require('bng-headless');
+    let headlessWallet = require('../start.js');
     let objMessage = {
         app: "attestation",
         payload_location: "inline",
@@ -527,3 +532,17 @@ function notifyserver(unit, data) {
     req.write(content);
     req.end();
 };
+//32位
+var encryptkey = "12345678123456781234567812345678";
+
+function encryption(data, iv) {
+    iv = iv || "";
+    var clearEncoding = 'utf8';
+    var cipherEncoding = 'base64';
+    var cipherChunks = [];
+    var cipher = crypto.createCipheriv('aes-256-ecb', encryptkey, iv);
+    cipher.setAutoPadding(true);
+    cipherChunks.push(cipher.update(data, clearEncoding, cipherEncoding));
+    cipherChunks.push(cipher.final(cipherEncoding));
+    return cipherChunks.join('');
+}
