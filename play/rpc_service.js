@@ -361,6 +361,29 @@ function initRPC() {
         });
         composer.composeDataFeedJoint(args[1], args[0], headlessWallet.signer, callbacks);
     });
+    server.expose('checkjobseeker', function (args, opt, cb) {
+        var birth = args[1].birth;
+        var profile = {
+            姓名: args[1].name,
+            性别: args[1].sex,
+            民族: args[1].nationality,
+            身份证: encryption(args[1].idnum),//加密
+            出生日期: birth.substring(0, 4) + "-" + birth.substring(4, 6) + "-" + birth.substring(6, 8),
+            住址: args[1].address,
+            求职意向: args[1].jobtarget,
+            特长: args[1].skill,
+            银行卡号: encryption(args[1].bank),//加密
+            电话: encryption(args[1].phone)//加密
+        };
+        getpayload(args[0], function (payload) {
+           var payloadobj= JSON.parse(payload);
+            if (payloadobj.profile.profile_hash === checkhash(profile)) {
+                cb(null, true);
+            } else {
+                cb(null, false);
+            }
+        });
+    });
     server.expose('addjobseeker', function (args, opt, cb) {
         getdefaultaddress(function (address) {
             var birth = args[1].birth;
@@ -394,7 +417,8 @@ function initRPC() {
                     };
                     let base64PrivateProfile = Buffer.from(JSON.stringify(private_profile)).toString('base64');
                     text += "\n\n [private profile](profile:" + base64PrivateProfile + ") ";
-                    cb(null, text);
+                    console.log(text);
+                    cb(null, unit);
                 }
             });
         });
@@ -411,6 +435,17 @@ function initRPC() {
     });
 }
 
+function checkhash(profile) {
+    let src_profile = {};
+    for (let field in profile) {
+        let value = profile[field];
+        src_profile[field] = value;
+    }
+    let profile_hash = objectHash.getBase64Hash(src_profile);
+    console.log("-------->>>>>>>>", profile_hash)
+    return profile_hash
+}
+
 function getUserId(profile) {
     let shortProfile = {
         name: profile.姓名,
@@ -421,17 +456,12 @@ function getUserId(profile) {
 }
 
 function hideProfile(address, profile) {
-    let composer = require('bng-core/composer.js');
-    let hidden_profile = {};
     let src_profile = {};
     for (let field in profile) {
         let value = profile[field];
-        let blinding = composer.generateBlinding();
-        let hidden_value = objectHash.getBase64Hash([value, blinding]);
-        hidden_profile[field] = hidden_value;
-        src_profile[field] = [value, blinding];
+        src_profile[field] = value;
     }
-    let profile_hash = objectHash.getBase64Hash(hidden_profile);
+    let profile_hash = objectHash.getBase64Hash(src_profile);
     let user_id = getUserId(profile);
     let public_profile = {
         profile_hash: profile_hash,
@@ -494,6 +524,16 @@ function getdefaultaddress(callback) {
         var address = rows[0].address;
         console.log("Witness SingleAddress --------------> " + JSON.stringify(address) + "\n");
         callback(address);
+    });
+}
+
+function getpayload(unit, callback) {
+    db.query("select payload from messages where unit=? AND app='attestation'", [unit], function (rows) {
+        if (rows.length === 0)
+            throw Error("no payload");
+        var payload = rows[0].payload;
+        console.log(payload);
+        callback(payload);
     });
 }
 
