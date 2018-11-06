@@ -119,8 +119,20 @@ Witness SingleAddress -------------->
 ```json
 {
     "jsonrpc": "2.0",
-    "result": "查看unit: https://explorer.bsure.vip/#Q5s9r6qGkWpMTYa02OH/MSr6OnlnWRqMhkVrL4Zys3I=\n\n [private profile](profile:eyJ1bml0IjoiUTVzOXI2cUdrV3BNVFlhMDJPSC9NU3I2T25sbldScU1oa1ZyTDRaeXMzST0iLCJwYXlsb2FkX2hhc2giOiJzeXBCUEV5WnNUVVFTeWVOTCtWSnNGdHF0blFWVVZvTVNnVWpUV1pDdWJJPSIsInNyY19wcm9maWxlIjp7IuWnk+WQjSI6WyLnjovmtannhLYiLCIzaHZqa3ZjQldvb0NRdGJiIl0sIuaAp+WIqyI6WyLnlLciLCJROFN0Q2g5WDlzSWpqT3RqIl0sIuawkeaXjyI6WyLmsYkiLCJaaldNZ25nMHE5V0VPMThuIl0sIui6q+S7veivgSI6WyJTL3Y5ckZrZ0xPQzVTUWpnaXh5bmpnPT0iLCJQNmxZdlliYXlrYW1pd2I5Il0sIuWHuueUn+aXpeacnyI6WyIwMzU4LTAxLTA2IiwiTjlHNjJxaVhBVVBGNDBFRCJdLCLkvY/lnYAiOlsi6ZW/5a6JIiwieExMK1dSWGV0SHRwZVAwTCJdLCLmsYLogYzmhI/lkJEiOlsi6K+X5Lq6IiwiUFhHNHM0QnJwZTN0c1VxNyJdLCLnibnplb8iOlsi5YaZ6K+XIiwiSy9vMlRsRmExc0l0azBmaCJdLCLpk7booYzljaHlj7ciOlsieG0wVnlWRWJ5QU5GREh1bUV5c2I0UT09IiwiVjdmZzVvQ1dmUC85b1dUZCJdLCLnlLXor50iOlsicDNIWFY1cmZPeWxHaWdma3Vzdk4zQT09IiwiUlZMZ1BVQ1BpeWRSSE1KTyJdfX0=) ",
+    "result": "h8mnhhZQuXeG2/+B7kDnvbDlvUuKvFHyX39ihmXUZ5w=",
     "id": 0
 }
 ```
 
+##### 简历数据验证
+```json
+{"jsonrpc":"2.0","id":0,"method":"checkjobseeker","params":["h8mnhhZQuXeG2/+B7kDnvbDlvUuKvFHyX39ihmXUZ5w=",{"name":"王浩然","sex":"男","nationality":"汉","idnum":"0000000000001","birth":"03580106","address":"长安","jobtarget":"诗人","skill":"写诗","bank":"00000000","phone":"000000"}]}
+```
+返回
+```json
+{
+    "jsonrpc": "2.0",
+    "result": true,
+    "id": 0
+}
+```
